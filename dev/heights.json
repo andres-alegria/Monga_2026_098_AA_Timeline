@@ -1,0 +1,14 @@
+{
+  "measured": "2026-10-15, Chrome, fonts loaded, ?fill=1, light palette, no logomark, no video credit lines, source line reading 'Ministry of Indigenous Affairs (MPI)'",
+  "note": "column width -> natural page height in px. The two-column card layout starts at 560px.",
+  "heights": {
+    "320": 1032, "335": 998, "360": 948, "375": 937, "390": 938,
+    "414": 942, "430": 943, "480": 898, "520": 877, "559": 879,
+    "560": 783, "600": 739, "660": 710, "700": 713, "740": 715, "780": 724
+  },
+  "formula": "clamp(730px, calc(1045px - 0.613 * (COL - 320px)), 1045px)",
+  "column": "min(780px, 100vw - 2*clamp(20px, 1px + 5vw, 40px))",
+  "fit": "never short (worst +13px at a 320px column); worst spare 134px at a 600px column, absorbed by the stage",
+  "why_no_step": "A single sloped clamp covers both layouts, so there is no step in the formula and therefore none of the 17px Windows-scrollbar band that a stepped formula creates at a breakpoint.",
+  "watch_the_source_line": "The footer source line sets the height at the narrowest columns: adding '(MPI)' made it wrap to an extra line below a 360px column and added 17px there. Re-measure after any edit to it."
+}

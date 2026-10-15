@@ -1,0 +1,607 @@
+/* 2026_098 — "How the invasion escalated"
+   A horizontal, one-card-at-a-time timeline sized to sit inside a Mongabay article.
+   Mongabay Design System tokens on a light page, with the greens and the mauve
+   accent sampled from the story's map figure.
+   Every value you might want to restyle is marked with a comment. */
+
+/* Rowan: the installed font if there is one, otherwise Mongabay's own theme copy,
+   which is served with access-control-allow-origin: * */
+@font-face {
+  font-family: "Rowan";
+  src: local("Rowan"), local("Rowan-Regular"),
+       url("https://news.mongabay.com/wp-content/themes/mongabay_v2/fonts/Rowan-Regular.woff2") format("woff2"),
+       url("https://news.mongabay.com/wp-content/themes/mongabay_v2/fonts/Rowan-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---------------------------------------------------------------- type */
+  --font-serif: "Rowan", "Rowan-Regular", Georgia, serif;    /* adjust display font here */
+  --font-sans: "Public Sans", Helvetica, Arial, sans-serif;  /* adjust text font here */
+
+  /* ------------------------------------------------------------ surfaces */
+  --surface: #e4e7e7;       /* adjust page background here (a brand grey, so the white cards read as cards) */
+  --video-bg: #1f332e;      /* adjust the dark green behind video frames here */
+  --card: #ffffff;          /* adjust card colour here */
+  --card-inset: #f1f3f3;    /* adjust the tint behind stats and disclosures here */
+
+  /* ----------------------------------------------------------------- ink */
+  --ink: #102f29;           /* adjust main text colour on cards here */
+  --ink-body: #003029;      /* adjust body text colour here */
+  --ink-muted: #788986;     /* adjust caption and label colour here */
+  --ink-subtle: #8da39f;    /* adjust the faintest card text here */
+  --page-ink: #102f29;      /* adjust the title and date colour here */
+  --page-ink-muted: #788986;/* adjust the deck, tick and source colour here */
+
+  /* ------------------------------------------------------------- accents */
+  --accent: #a8322c;        /* adjust the active tick and quote rule here */
+  --accent-on-dark: #fae451;/* the map's fire yellow, used only over the video */
+  --quote-rule: var(--accent); /* adjust the pull-quote rule colour here */
+  --stat: #a8322c;          /* adjust the big number colour here */
+  --mauve: #bd889a;         /* the map's property colour, used for on-screen-text rules */
+
+  /* --------------------------------------------------------------- lines */
+  --rail-line: #c3cbc9;     /* adjust the timeline rule and tick colour here */
+  --rule: #e4e7e7;          /* adjust hairlines inside cards here */
+
+  /* --------------------------------------------------------------- shape */
+  --radius-card: 12px;      /* adjust card corner radius here */
+  --radius-media: 8px;      /* adjust media corner radius here */
+  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+
+  /* ------------------------------------------------------------ carousel */
+  --gap: 14px;              /* adjust space between cards here */
+  --peek: 26px;             /* adjust how much of the next card shows here */
+  --pad-card: 22px;         /* adjust card inner padding here */
+  --photo-col: 54%;         /* adjust the photo column width on wide cards here */
+  --video-h: 340px;         /* adjust how tall a video plays here */
+  --photo-max: 330px;       /* adjust the tallest a photo gets here */
+  --dim: 0.5;               /* adjust how faint the neighbouring cards are here */
+  --dim-scale: 0.95;        /* adjust how much the neighbouring cards shrink here */
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;          /* adjust base text size here: most sizes below scale with it */
+  line-height: 1.5;
+  color: var(--page-ink);
+  background: var(--surface);
+  -webkit-font-smoothing: antialiased;
+}
+
+.tl {
+  max-width: 780px;         /* adjust the widest the graphic gets here (Mongabay's column) */
+  margin: 0 auto;
+  padding: 20px 16px 16px;  /* adjust outer spacing here */
+}
+/* In an article iframe the page drops its side padding so the graphic lines up
+   with the story text, as in the 089 / 090 embeds. */
+.is-embedded .tl { padding: 10px 0 12px; }
+
+/* The shortcode height is a formula of the column width, so it is never exact.
+   In the frame the page stretches and the stage takes the spare pixels, which
+   only means a little more background around the card — never a white gap. */
+body.is-embedded { min-height: 100%; }
+.is-embedded .tl {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.is-embedded .stage { flex: 1 1 auto; min-height: var(--stage-h, auto); height: auto; }
+
+/* ====================================================== header =========== */
+.tl-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.625rem, 3vw + 1rem, 2.75rem); /* adjust title size here */
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  color: var(--page-ink);
+  text-wrap: balance;
+}
+
+.tl-deck {
+  margin: 12px 0 0;
+  max-width: 44em;
+  font-size: clamp(0.9375rem, 0.3vw + 0.89rem, 1.0625rem); /* adjust deck size here */
+  line-height: 1.5;
+  color: var(--page-ink-muted);
+}
+
+/* ====================================================== rail ============= */
+/* One tick per card on a single rule; the date is printed on the first card
+   of each day, so two beats on one day read as two ticks under one date. */
+.rail {
+  position: relative;
+  display: flex;
+  margin: 22px 0 16px;      /* adjust space around the timeline rail here */
+  padding-top: 26px;        /* room for the date labels above the rule */
+}
+.rail::before {             /* the rule the ticks sit on */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9px;
+  height: 1px;
+  background: var(--rail-line);
+}
+
+.tick {
+  position: relative;
+  flex: 1 1 0;
+  display: block;
+  padding: 0 0 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.tick .d {                  /* the date label */
+  display: block;
+  font-family: var(--font-serif);
+  font-size: clamp(0.9375rem, 0.7vw + 0.8rem, 1.1875rem); /* adjust date size here */
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--page-ink-muted);
+  transform: translateY(-26px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: color 240ms ease;
+}
+.tick .dot {                /* the tick itself */
+  display: block;
+  width: 9px;               /* adjust tick size here */
+  height: 9px;
+  margin-bottom: 5px;
+  border-radius: 50%;
+  background: var(--rail-line);
+  transition: background 240ms ease, transform 240ms ease;
+}
+.tick:hover .dot { background: var(--page-ink-muted); }
+.tick[aria-current="step"] .dot { background: var(--accent); transform: scale(1.45); }
+.tick[aria-current="step"] .d,
+.tick.is-day-active .d { color: var(--page-ink); }
+.tick.is-done .dot { background: var(--page-ink-muted); }
+
+/* ====================================================== stage ============ */
+.stage {
+  position: relative;
+  overflow: hidden;
+  /* bleed the clipping edge out to the page margin so neighbours fade off-screen */
+  margin: 0 calc(var(--peek) * -1);
+  padding: 0 var(--peek);
+  touch-action: pan-y;
+  height: var(--stage-h, auto);  /* set by app.js to the tallest card */
+}
+
+.row {
+  display: flex;
+  align-items: center;      /* a lighter card floats in the middle of the stage */
+  gap: var(--gap);
+  will-change: transform;
+}
+
+.card {
+  flex: 0 0 auto;
+  width: var(--card-w, 100%);
+  background: var(--card);
+  border-radius: var(--radius-card);
+  padding: var(--pad-card);
+  color: var(--ink-body);
+  display: flex;
+  flex-direction: column;
+  opacity: var(--dim);
+  transform: scale(var(--dim-scale));
+  transform-origin: 50% 50%;
+}
+/* the card in the middle lifts off the background, as in his full-bleed map template */
+.card.is-active {
+  opacity: 1;
+  transform: none;
+  box-shadow: 0 2px 14px rgba(16, 47, 41, 0.1);  /* adjust the active card's lift here */
+}
+/* a neighbour is inert until it is brought to the middle */
+.card:not(.is-active) { pointer-events: none; }
+
+.card-head {
+  margin: 0 0 12px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.1875rem, 0.9vw + 1rem, 1.4375rem);  /* adjust card heading size here */
+  line-height: 1.2;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.card-body { flex: 1; display: block; }
+
+/* Two columns once there is room: media on the left, words on the right. A video
+   column is only as wide as the clip itself; a photo column takes a set share. */
+@media (min-width: 560px) {
+  .card.has-media .card-body {
+    display: grid;
+    gap: 22px;              /* adjust the gap between media and text here */
+    align-items: center;
+  }
+  .card.media-photo .card-body { grid-template-columns: var(--photo-col) 1fr; }
+  .card.media-video .card-body { grid-template-columns: auto 1fr; }
+  .card.has-media .col-media { grid-column: 1; }
+  .card.has-media .col-text { grid-column: 2; }
+}
+
+.b-text {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;     /* adjust body text size here */
+  line-height: 1.55;
+  color: var(--ink-body);
+}
+.b-text:last-child { margin-bottom: 0; }
+.b-text strong { font-weight: 600; color: var(--ink); }
+
+/* ------------------------------------------------------------ pull quote */
+.b-quote {
+  margin: 0 0 12px;
+  padding: 1px 0 1px 15px;
+  border-left: 3px solid var(--quote-rule);  /* adjust quote rule here */
+}
+.b-quote p {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.0625rem, 0.7vw + 0.95rem, 1.3125rem);  /* adjust quote size here */
+  line-height: 1.3;
+  color: var(--ink);
+}
+.b-quote .attr {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+}
+
+/* ------------------------------------------------------------- big stat */
+.b-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  background: var(--card-inset);
+  border-radius: var(--radius-media);
+}
+.b-stat .v {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 2.4vw + 1.3rem, 2.75rem);  /* adjust stat number size here */
+  line-height: 1;
+  color: var(--stat);
+}
+.b-stat .l {
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: var(--ink-body);
+}
+
+/* ------------------------------------------------------------ still image */
+.b-figure { margin: 0; }
+.b-figure img {
+  display: block;
+  width: 100%;
+  max-height: var(--photo-max);
+  object-fit: cover;
+  object-position: center;
+  height: auto;
+  border-radius: var(--radius-media);
+  background: var(--card-inset);
+}
+
+.b-caption {
+  margin: 8px 0 0;
+  font-size: 0.75rem;       /* adjust caption size here */
+  line-height: 1.45;
+  color: var(--ink-muted);
+}
+
+/* ====================================================== video ============ */
+.b-video { margin: 0; }
+
+/* the frame: a vertical phone recording, held to a readable height */
+.v-frame {
+  position: relative;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 12px;      /* adjust video frame radius here */
+  overflow: hidden;
+  background: var(--video-bg);
+  line-height: 0;
+}
+.v-frame video {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: var(--video-h);
+  object-fit: contain;
+  background: var(--video-bg);
+}
+
+/* big play target over the whole frame */
+.v-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(13, 26, 23, 0.22);
+  cursor: pointer;
+  transition: background 160ms ease, opacity 160ms ease;
+}
+.v-play:hover { background: rgba(13, 26, 23, 0.34); }
+.v-play span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;              /* adjust the play button size here */
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(253, 253, 253, 0.94);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.3);
+  transition: transform 160ms ease;
+}
+.v-play:hover span { transform: scale(1.06); }
+.v-play svg { width: 21px; height: 21px; fill: var(--ink); margin-left: 3px; }
+.is-playing .v-play { opacity: 0; pointer-events: none; }
+.is-playing .v-surface { pointer-events: auto; }
+
+/* an invisible click target while the video plays, so a click pauses it */
+.v-surface {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: none;
+}
+
+/* progress line along the bottom of the frame; click it to seek */
+.v-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;             /* a generous click target; the line itself is thinner */
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+  background: linear-gradient(rgba(13, 26, 23, 0), rgba(13, 26, 23, 0.45));
+}
+.v-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;              /* adjust progress-line thickness here */
+  background: rgba(253, 253, 253, 0.28);
+}
+.v-bar-fill {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 0;
+  height: 3px;
+  background: var(--accent-on-dark); /* adjust the played-so-far colour here */
+}
+
+/* sound toggle, pinned inside the frame */
+.v-sound {
+  position: absolute;
+  right: 8px;
+  bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px 6px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(13, 26, 23, 0.72);
+  color: #fdfdfd;
+  font-family: inherit;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+.v-sound:hover { background: rgba(13, 26, 23, 0.9); }
+.v-sound svg { width: 13px; height: 13px; fill: currentColor; }
+.v-sound[aria-pressed="true"] { background: var(--accent-on-dark); color: var(--ink); }
+
+/* ------------------------------------- the caption block, outside the frame */
+.v-meta { margin: 12px 0 0; }
+@media (min-width: 560px) {
+  /* on a wide card the translations live in the text column, under the words */
+  .card.has-media .col-text .v-meta { margin-top: 4px; }
+}
+
+.v-label {
+  margin: 0 0 6px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.v-overlays { margin: 0 0 10px; padding: 0; list-style: none; }
+.v-overlays:last-child { margin-bottom: 0; }  /* nothing follows when there is no credit line */
+.v-overlays li {
+  padding: 4px 0 4px 12px;
+  border-left: 2px solid var(--mauve);  /* adjust the on-screen-text rule colour here */
+}
+.v-overlays li + li { margin-top: 2px; }
+.v-overlays .en {
+  display: block;
+  font-size: 0.875rem;      /* adjust translated on-screen text size here */
+  line-height: 1.3;
+  color: var(--ink);
+}
+.v-overlays .pt {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.75rem;
+  font-style: italic;
+  line-height: 1.25;
+  color: var(--ink-muted);
+}
+
+.v-source, .v-note {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--ink-muted);
+}
+.v-note:last-child, .v-source:last-child { margin-bottom: 0; }
+
+/* the long post caption, folded away so it doesn't set the card's height */
+.b-more {
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--card-inset);
+  border-radius: 6px;
+}
+.b-more > summary {
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink);
+  list-style: none;
+}
+.b-more > summary::-webkit-details-marker { display: none; }
+.b-more > summary::before {
+  content: "+ ";
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+.b-more[open] > summary::before { content: "– "; }
+.b-more p {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+/* ====================================================== controls ========= */
+.nav {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 40px;              /* adjust arrow button size here */
+  height: 40px;
+  margin-top: -20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(16, 47, 41, 0.18);
+  transition: background 160ms ease, opacity 160ms ease, transform 160ms ease;
+}
+.nav::before {              /* chevron, drawn with a rotated square corner */
+  content: "";
+  display: block;
+  width: 9px;
+  height: 9px;
+  margin: 0 auto;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+}
+.nav--prev { left: 0; }
+.nav--prev::before { transform: translateX(2px) rotate(-135deg); }
+.nav--next { right: 0; }
+.nav--next::before { transform: translateX(-2px) rotate(45deg); }
+.nav:hover { background: var(--card); transform: scale(1.06); box-shadow: 0 2px 10px rgba(16, 47, 41, 0.26); }
+.nav[disabled] { opacity: 0; pointer-events: none; }
+
+/* The rail already shows where the reader is, so the counter is for screen
+   readers only (it is the element that announces each move). */
+.step {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ====================================================== footer =========== */
+.tl-foot {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rail-line);
+}
+.tl-source {
+  margin: 0;
+  font-size: 0.75rem;       /* adjust source line size here */
+  line-height: 1.45;
+  color: var(--page-ink-muted);
+}
+
+.tl-noscript {
+  margin-top: 20px;
+  padding: 18px;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  color: var(--ink-body);
+}
+.tl-noscript p { margin: 0 0 10px; }
+.tl-noscript p:last-child { margin-bottom: 0; }
+
+/* ====================================================== behaviour ======== */
+button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.card button:focus-visible,
+.card summary:focus-visible { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--ink); outline: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .tick .dot, .tick .d, .nav, .v-play, .v-play span, .v-sound { transition: none; }
+}
+
+/* ====================================================== narrow =========== */
+@media (max-width: 559px) {
+  :root {
+    --pad-card: 16px;
+    --peek: 16px;
+    --gap: 10px;
+    --video-h: 290px;       /* adjust the video height on phones here */
+    --photo-max: 200px;
+  }
+  .card-body > .col-media { margin-top: 12px; }
+  .nav { width: 34px; height: 34px; margin-top: -17px; }
+  .rail { margin: 18px 0 14px; }
+  .v-overlays li { padding: 3px 0 3px 10px; }
+  .v-meta { margin-top: 10px; }
+}
+
+@media (max-width: 400px) {
+  :root { --video-h: 265px; --photo-max: 175px; }
+}

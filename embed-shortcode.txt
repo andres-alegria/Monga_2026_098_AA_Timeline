@@ -1,0 +1,11 @@
+Mongabay WordPress embed — paste this as an [iframe] shortcode in the post.
+Replace YOUR-DEPLOY-URL with the deployed page (Vercel or GitHub Pages).
+
+The height is a CSS formula of the article column width, the route that works at
+Mongabay (089 / 090). ?fill=1 makes the page stretch to the frame, so any pixels
+the formula over-estimates go into the background around the card, never a gap.
+
+[iframe src="https://YOUR-DEPLOY-URL/?fill=1" width="100%" scrolling="no" title="How the invasion escalated" style="display:block; width:100%; border:0; height:clamp(730px, calc(1045px - 0.613 * (min(780px, 100vw - 2*clamp(20px, 1px + 5vw, 40px)) - 320px)), 1045px);"][/iframe]
+
+To open the story on one moment instead of the first, add &step=N (1–7):
+  src="https://YOUR-DEPLOY-URL/?fill=1&step=4"
