@@ -57,6 +57,7 @@
   --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
 
   /* ------------------------------------------------------------ carousel */
+  --tl-pad-x: 16px;         /* the page's side padding; 0 inside an article iframe */
   --gap: 14px;              /* adjust space between cards here */
   --peek: 26px;             /* adjust how much of the next card shows here */
   --pad-card: 22px;         /* adjust card inner padding here */
@@ -85,7 +86,7 @@ body {
 .tl {
   max-width: 780px;         /* adjust the widest the graphic gets here (Mongabay's column) */
   margin: 0 auto;
-  padding: 20px 16px 16px;  /* adjust outer spacing here */
+  padding: 20px var(--tl-pad-x) 16px;  /* adjust outer spacing here */
   /* the stage bleeds --peek past this box on each side; clip it rather than let it
      widen the page, which inside an article iframe meant a horizontal scrollbar.
      `clip`, not `hidden`: hidden would make this a scroll container. */
@@ -93,7 +94,8 @@ body {
 }
 /* In an article iframe the page drops its side padding so the graphic lines up
    with the story text, as in the 089 / 090 embeds. */
-.is-embedded .tl { padding: 10px 0 12px; }
+body.is-embedded { --tl-pad-x: 0px; }
+.is-embedded .tl { padding: 10px var(--tl-pad-x) 12px; }
 
 /* The shortcode height is a formula of the column width, so it is never exact.
    In the frame the page stretches and the stage takes the spare pixels, which
@@ -551,9 +553,9 @@ body.is-embedded { min-height: 100%; }
   position: absolute;
   top: 50%;
   z-index: 3;
-  width: 40px;              /* adjust arrow button size here */
-  height: 40px;
-  margin-top: -20px;
+  width: 36px;              /* adjust arrow button size here */
+  height: 36px;
+  margin-top: -18px;
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -572,12 +574,13 @@ body.is-embedded { min-height: 100%; }
   border-top: 2px solid currentColor;
   border-right: 2px solid currentColor;
 }
-/* inset by --peek: the stage bleeds that far past the column, and .tl clips it,
-   which was shaving the outer edge off both arrows (all of it in an embed, where
-   .tl has no side padding to bleed into) */
-.nav--prev { left: calc(var(--peek) + 6px); }
+/* The stage bleeds --peek past the page's content box and .tl clips at its padding
+   box, so the clip edge sits (--peek - --tl-pad-x) inside the stage. Put the arrows
+   exactly there: flush with the frame, never over it, and no further in than they
+   have to be, which is what kept them off the card's text. */
+.nav--prev { left: calc(var(--peek) - var(--tl-pad-x)); }
 .nav--prev::before { transform: translateX(2px) rotate(-135deg); }
-.nav--next { right: calc(var(--peek) + 6px); }
+.nav--next { right: calc(var(--peek) - var(--tl-pad-x)); }
 .nav--next::before { transform: translateX(-2px) rotate(45deg); }
 .nav:hover { background: var(--card); transform: scale(1.06); box-shadow: 0 2px 10px rgba(26, 24, 20, 0.32); }
 .nav[disabled] { opacity: 0; pointer-events: none; }
