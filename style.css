@@ -1,8 +1,9 @@
 /* 2026_098 — "How the invasion escalated"
    A horizontal, one-card-at-a-time timeline sized to sit inside a Mongabay article.
-   Version 2: the palette and the paper come from the story's banner art
-   (73_tunaItata_03_B.psd) — aged paper, near-black ink, coral pink accent.
-   Version 1, in the greens and red of the story's map figure, is commit c60cfdd.
+   Version 3: the surface and palette come from the story's banner art,
+   73_tunaItata_03_Black.psd — a near-black grained ground, white type, red accent.
+   Earlier: v2 on the aged paper of 73_tunaItata_03_B.psd (commit 351dd05),
+   v1 in the greens and red of the story's map figure (commit c60cfdd).
    Every value you might want to restyle is marked with a comment. */
 
 /* Rowan: the installed font if there is one, otherwise Mongabay's own theme copy,
@@ -23,33 +24,35 @@
   --font-sans: "Public Sans", Helvetica, Arial, sans-serif;  /* adjust text font here */
 
   /* ------------------------------------------------------------ surfaces */
-  --surface: #d6cdbc;       /* the banner's paper, under assets/paper.jpg */
-  --video-bg: #1a1814;      /* adjust the near-black behind video frames here */
-  --card: #f7f3ea;          /* adjust card colour here (warm, so it sits on the paper) */
-  --card-inset: #ece5d6;    /* adjust the tint behind stats and disclosures here */
+  --surface: #1c1c1c;       /* the banner's ground, under assets/grain.jpg */
+  --video-bg: #141414;      /* adjust the black behind video frames here */
+  --card: #2e2e2e;          /* adjust card colour here (a step up from the ground) */
+  --card-inset: #383838;    /* adjust the tint behind stats and disclosures here */
+  --card-edge: rgba(255, 255, 255, 0.08); /* the hairline that separates a card on black */
+  --on-light: #141414;      /* ink for the white and red chips (play button, sound pill) */
 
   /* ----------------------------------------------------------------- ink */
-  --ink: #1a1814;           /* adjust main text colour on cards here */
-  --ink-body: #2b2721;      /* adjust body text colour here */
-  --ink-muted: #6e6557;     /* adjust caption and label colour here (5.1:1 on the card) */
-  --ink-subtle: #928978;    /* adjust the faintest card text here */
-  --page-ink: #1a1814;      /* adjust the title and date colour here */
-  --page-ink-muted: #5f5648;/* adjust the deck, tick and source colour here (4.6:1 on paper) */
+  --ink: #f5f3f0;           /* adjust main text colour on cards here (13.1:1) */
+  --ink-body: #e6e2dd;      /* adjust body text colour here (11.3:1) */
+  --ink-muted: #a39c93;     /* adjust caption and label colour here (5.4:1 on the card) */
+  --ink-subtle: #978f86;    /* adjust the faintest card text here (4.6:1) */
+  --page-ink: #f5f3f0;      /* adjust the title and date colour here (15.4:1) */
+  --page-ink-muted: #a39d94;/* adjust the deck, tick and source colour here (6.3:1) */
 
   /* ------------------------------------------------------------- accents */
-  /* The banner's coral pink. It is a BLOCK colour there, never type: at 1.9:1 on
-     the paper it cannot carry text, so anything set in the accent uses the deeper
-     --accent-ink and only shapes get the bright one. */
-  --accent: #fb7374;        /* adjust the pink of dots, rules and blocks here */
-  --accent-ink: #b23f42;    /* adjust the pink used for text here (readable on paper) */
-  --accent-on-dark: #fb7374;/* the same pink, over the dark video frame */
+  /* The banner's red. On this near-black ground it clears 5:1, so unlike the paper
+     version it can carry type as well as fill blocks, and --accent-ink is the same
+     colour rather than a deepened one. */
+  --accent: #ff4156;        /* adjust the red of dots, rules and blocks here */
+  --accent-ink: var(--accent); /* the red as type: 5.0:1 on the ground, 4.3:1 on a card */
+  --accent-on-dark: var(--accent);/* the same red, over the video frame */
   --quote-rule: var(--accent); /* adjust the pull-quote rule colour here */
   --stat: var(--accent-ink);/* adjust the big number colour here */
   --mauve: var(--accent);   /* the rule beside the on-screen translations */
 
   /* --------------------------------------------------------------- lines */
-  --rail-line: #b6ad9c;     /* adjust the timeline rule and tick colour here */
-  --rule: #ded6c6;          /* adjust hairlines inside cards here */
+  --rail-line: #4a4a4a;     /* adjust the timeline rule and tick colour here */
+  --rule: #3c3c3c;          /* adjust hairlines inside cards here */
 
   /* --------------------------------------------------------------- shape */
   --radius-card: 12px;      /* adjust card corner radius here */
@@ -78,8 +81,8 @@ body {
   font-size: 16px;          /* adjust base text size here: most sizes below scale with it */
   line-height: 1.5;
   color: var(--page-ink);
-  /* the banner's paper, cut from a clean corner of the artwork and made seamless */
-  background: var(--surface) url("assets/paper.jpg") repeat center / 240px 240px;
+  /* the banner's ground, cut from a clean corner of the artwork and made seamless */
+  background: var(--surface) url("assets/grain.jpg") repeat center / 240px 240px;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -226,7 +229,9 @@ body.is-embedded { min-height: 100%; }
 .card.is-active {
   opacity: 1;
   transform: none;
-  box-shadow: 0 2px 14px rgba(26, 24, 20, 0.16);  /* adjust the active card's lift here */
+  /* on black a drop shadow does nothing, so the card is edged instead; inset keeps
+     it out of the layout, so card heights do not move */
+  box-shadow: inset 0 0 0 1px var(--card-edge), 0 2px 18px rgba(0, 0, 0, 0.45);
 }
 /* a neighbour is inert until it is brought to the middle */
 .card:not(.is-active) { pointer-events: none; }
@@ -388,11 +393,11 @@ body.is-embedded { min-height: 100%; }
   border: 0;
   padding: 0;
   margin: 0;
-  background: rgba(13, 26, 23, 0.22);
+  background: rgba(10, 10, 10, 0.22);
   cursor: pointer;
   transition: background 160ms ease, opacity 160ms ease;
 }
-.v-play:hover { background: rgba(13, 26, 23, 0.34); }
+.v-play:hover { background: rgba(10, 10, 10, 0.34); }
 .v-play span {
   display: flex;
   align-items: center;
@@ -405,7 +410,7 @@ body.is-embedded { min-height: 100%; }
   transition: transform 160ms ease;
 }
 .v-play:hover span { transform: scale(1.06); }
-.v-play svg { width: 21px; height: 21px; fill: var(--ink); margin-left: 3px; }
+.v-play svg { width: 21px; height: 21px; fill: var(--on-light); margin-left: 3px; }
 .is-playing .v-play { opacity: 0; pointer-events: none; }
 .is-playing .v-surface { pointer-events: auto; }
 
@@ -430,7 +435,7 @@ body.is-embedded { min-height: 100%; }
   display: flex;
   align-items: flex-end;
   cursor: pointer;
-  background: linear-gradient(rgba(13, 26, 23, 0), rgba(13, 26, 23, 0.45));
+  background: linear-gradient(rgba(10, 10, 10, 0), rgba(10, 10, 10, 0.5));
 }
 .v-bar::after {
   content: "";
@@ -464,7 +469,7 @@ body.is-embedded { min-height: 100%; }
   /* pink is the resting state — the clip is muted and the button is the way to
      turn sound on, so it carries the accent until it has been used */
   background: var(--accent-on-dark);
-  color: var(--ink);
+  color: var(--on-light);
   font-family: inherit;
   font-size: 0.6875rem;
   font-weight: 500;
@@ -472,11 +477,11 @@ body.is-embedded { min-height: 100%; }
   cursor: pointer;
   transition: background 160ms ease;
 }
-.v-sound:hover { background: #fd8c8d; }   /* adjust the hover pink here */
+.v-sound:hover { background: #ff5c6e; }   /* adjust the hover red here */
 .v-sound svg { width: 13px; height: 13px; fill: currentColor; }
 /* once the sound is on, it steps back to the dark chip */
-.v-sound[aria-pressed="true"] { background: rgba(26, 24, 20, 0.78); color: #f7f3ea; }
-.v-sound[aria-pressed="true"]:hover { background: rgba(26, 24, 20, 0.92); }
+.v-sound[aria-pressed="true"] { background: rgba(10, 10, 10, 0.8); color: var(--page-ink); }
+.v-sound[aria-pressed="true"]:hover { background: rgba(10, 10, 10, 0.94); }
 
 /* ------------------------------------- the caption block, outside the frame */
 .v-meta { margin: 12px 0 0; }
@@ -563,10 +568,10 @@ body.is-embedded { min-height: 100%; }
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--card);
-  color: var(--ink);
+  background: var(--page-ink);
+  color: var(--on-light);
   cursor: pointer;
-  box-shadow: 0 1px 6px rgba(26, 24, 20, 0.22);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
   transition: background 160ms ease, opacity 160ms ease, transform 160ms ease;
 }
 .nav::before {              /* chevron, drawn with a rotated square corner */
@@ -586,7 +591,7 @@ body.is-embedded { min-height: 100%; }
 .nav--prev::before { transform: translateX(2px) rotate(-135deg); }
 .nav--next { right: calc(var(--peek) - var(--tl-pad-x)); }
 .nav--next::before { transform: translateX(-2px) rotate(45deg); }
-.nav:hover { background: var(--card); transform: scale(1.06); box-shadow: 0 2px 10px rgba(26, 24, 20, 0.32); }
+.nav:hover { background: #ffffff; transform: scale(1.06); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); }
 .nav[disabled] { opacity: 0; pointer-events: none; }
 
 /* The rail already shows where the reader is, so the counter is for screen
