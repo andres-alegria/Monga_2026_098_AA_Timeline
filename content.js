@@ -67,7 +67,7 @@ window.CONTENT = {
         },
         {
           type: "quote",
-          html: "Ituna‑Itatá is in the past. Now this is the Promised Land,",
+          html: "Ituna‑Itatá is in the past. Now this is the Promised Land",
           attribution: "he wrote."
         },
       ]

@@ -572,9 +572,12 @@ body.is-embedded { min-height: 100%; }
   border-top: 2px solid currentColor;
   border-right: 2px solid currentColor;
 }
-.nav--prev { left: 0; }
+/* inset by --peek: the stage bleeds that far past the column, and .tl clips it,
+   which was shaving the outer edge off both arrows (all of it in an embed, where
+   .tl has no side padding to bleed into) */
+.nav--prev { left: calc(var(--peek) + 6px); }
 .nav--prev::before { transform: translateX(2px) rotate(-135deg); }
-.nav--next { right: 0; }
+.nav--next { right: calc(var(--peek) + 6px); }
 .nav--next::before { transform: translateX(-2px) rotate(45deg); }
 .nav:hover { background: var(--card); transform: scale(1.06); box-shadow: 0 2px 10px rgba(26, 24, 20, 0.32); }
 .nav[disabled] { opacity: 0; pointer-events: none; }
