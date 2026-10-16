@@ -1,7 +1,8 @@
 /* 2026_098 — "How the invasion escalated"
    A horizontal, one-card-at-a-time timeline sized to sit inside a Mongabay article.
-   Mongabay Design System tokens on a light page, with the greens and the mauve
-   accent sampled from the story's map figure.
+   Version 2: the palette and the paper come from the story's banner art
+   (73_tunaItata_03_B.psd) — aged paper, near-black ink, coral pink accent.
+   Version 1, in the greens and red of the story's map figure, is commit c60cfdd.
    Every value you might want to restyle is marked with a comment. */
 
 /* Rowan: the installed font if there is one, otherwise Mongabay's own theme copy,
@@ -22,29 +23,33 @@
   --font-sans: "Public Sans", Helvetica, Arial, sans-serif;  /* adjust text font here */
 
   /* ------------------------------------------------------------ surfaces */
-  --surface: #e4e7e7;       /* adjust page background here (a brand grey, so the white cards read as cards) */
-  --video-bg: #1f332e;      /* adjust the dark green behind video frames here */
-  --card: #ffffff;          /* adjust card colour here */
-  --card-inset: #f1f3f3;    /* adjust the tint behind stats and disclosures here */
+  --surface: #d6cdbc;       /* the banner's paper, under assets/paper.jpg */
+  --video-bg: #1a1814;      /* adjust the near-black behind video frames here */
+  --card: #f7f3ea;          /* adjust card colour here (warm, so it sits on the paper) */
+  --card-inset: #ece5d6;    /* adjust the tint behind stats and disclosures here */
 
   /* ----------------------------------------------------------------- ink */
-  --ink: #102f29;           /* adjust main text colour on cards here */
-  --ink-body: #003029;      /* adjust body text colour here */
-  --ink-muted: #788986;     /* adjust caption and label colour here */
-  --ink-subtle: #8da39f;    /* adjust the faintest card text here */
-  --page-ink: #102f29;      /* adjust the title and date colour here */
-  --page-ink-muted: #788986;/* adjust the deck, tick and source colour here */
+  --ink: #1a1814;           /* adjust main text colour on cards here */
+  --ink-body: #2b2721;      /* adjust body text colour here */
+  --ink-muted: #6e6557;     /* adjust caption and label colour here (5.1:1 on the card) */
+  --ink-subtle: #928978;    /* adjust the faintest card text here */
+  --page-ink: #1a1814;      /* adjust the title and date colour here */
+  --page-ink-muted: #5f5648;/* adjust the deck, tick and source colour here (4.6:1 on paper) */
 
   /* ------------------------------------------------------------- accents */
-  --accent: #a8322c;        /* adjust the active tick and quote rule here */
-  --accent-on-dark: #fae451;/* the map's fire yellow, used only over the video */
+  /* The banner's coral pink. It is a BLOCK colour there, never type: at 1.9:1 on
+     the paper it cannot carry text, so anything set in the accent uses the deeper
+     --accent-ink and only shapes get the bright one. */
+  --accent: #fb7374;        /* adjust the pink of dots, rules and blocks here */
+  --accent-ink: #b23f42;    /* adjust the pink used for text here (readable on paper) */
+  --accent-on-dark: #fb7374;/* the same pink, over the dark video frame */
   --quote-rule: var(--accent); /* adjust the pull-quote rule colour here */
-  --stat: #a8322c;          /* adjust the big number colour here */
-  --mauve: #bd889a;         /* the map's property colour, used for on-screen-text rules */
+  --stat: var(--accent-ink);/* adjust the big number colour here */
+  --mauve: var(--accent);   /* the rule beside the on-screen translations */
 
   /* --------------------------------------------------------------- lines */
-  --rail-line: #c3cbc9;     /* adjust the timeline rule and tick colour here */
-  --rule: #e4e7e7;          /* adjust hairlines inside cards here */
+  --rail-line: #b6ad9c;     /* adjust the timeline rule and tick colour here */
+  --rule: #ded6c6;          /* adjust hairlines inside cards here */
 
   /* --------------------------------------------------------------- shape */
   --radius-card: 12px;      /* adjust card corner radius here */
@@ -72,7 +77,8 @@ body {
   font-size: 16px;          /* adjust base text size here: most sizes below scale with it */
   line-height: 1.5;
   color: var(--page-ink);
-  background: var(--surface);
+  /* the banner's paper, cut from a clean corner of the artwork and made seamless */
+  background: var(--surface) url("assets/paper.jpg") repeat center / 240px 240px;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -177,7 +183,7 @@ body.is-embedded { min-height: 100%; }
 .tick:hover .dot { background: var(--page-ink-muted); }
 .tick[aria-current="step"] .dot { background: var(--accent); transform: scale(1.45); }
 .tick[aria-current="step"] .d,
-.tick.is-day-active .d { color: var(--accent); }  /* the selected date matches its tick */
+.tick.is-day-active .d { color: var(--accent-ink); }  /* the readable pink, not the block pink */
 .tick.is-done .dot { background: var(--page-ink-muted); }
 
 /* ====================================================== stage ============ */
@@ -218,7 +224,7 @@ body.is-embedded { min-height: 100%; }
 .card.is-active {
   opacity: 1;
   transform: none;
-  box-shadow: 0 2px 14px rgba(16, 47, 41, 0.1);  /* adjust the active card's lift here */
+  box-shadow: 0 2px 14px rgba(26, 24, 20, 0.16);  /* adjust the active card's lift here */
 }
 /* a neighbour is inert until it is brought to the middle */
 .card:not(.is-active) { pointer-events: none; }
@@ -554,7 +560,7 @@ body.is-embedded { min-height: 100%; }
   background: var(--card);
   color: var(--ink);
   cursor: pointer;
-  box-shadow: 0 1px 6px rgba(16, 47, 41, 0.18);
+  box-shadow: 0 1px 6px rgba(26, 24, 20, 0.22);
   transition: background 160ms ease, opacity 160ms ease, transform 160ms ease;
 }
 .nav::before {              /* chevron, drawn with a rotated square corner */
@@ -570,7 +576,7 @@ body.is-embedded { min-height: 100%; }
 .nav--prev::before { transform: translateX(2px) rotate(-135deg); }
 .nav--next { right: 0; }
 .nav--next::before { transform: translateX(-2px) rotate(45deg); }
-.nav:hover { background: var(--card); transform: scale(1.06); box-shadow: 0 2px 10px rgba(16, 47, 41, 0.26); }
+.nav:hover { background: var(--card); transform: scale(1.06); box-shadow: 0 2px 10px rgba(26, 24, 20, 0.32); }
 .nav[disabled] { opacity: 0; pointer-events: none; }
 
 /* The rail already shows where the reader is, so the counter is for screen
