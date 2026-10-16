@@ -461,8 +461,10 @@ body.is-embedded { min-height: 100%; }
   padding: 6px 10px 6px 8px;
   border: 0;
   border-radius: 999px;
-  background: rgba(13, 26, 23, 0.72);
-  color: #fdfdfd;
+  /* pink is the resting state — the clip is muted and the button is the way to
+     turn sound on, so it carries the accent until it has been used */
+  background: var(--accent-on-dark);
+  color: var(--ink);
   font-family: inherit;
   font-size: 0.6875rem;
   font-weight: 500;
@@ -470,9 +472,11 @@ body.is-embedded { min-height: 100%; }
   cursor: pointer;
   transition: background 160ms ease;
 }
-.v-sound:hover { background: rgba(13, 26, 23, 0.9); }
+.v-sound:hover { background: #fd8c8d; }   /* adjust the hover pink here */
 .v-sound svg { width: 13px; height: 13px; fill: currentColor; }
-.v-sound[aria-pressed="true"] { background: var(--accent-on-dark); color: var(--ink); }
+/* once the sound is on, it steps back to the dark chip */
+.v-sound[aria-pressed="true"] { background: rgba(26, 24, 20, 0.78); color: #f7f3ea; }
+.v-sound[aria-pressed="true"]:hover { background: rgba(26, 24, 20, 0.92); }
 
 /* ------------------------------------- the caption block, outside the frame */
 .v-meta { margin: 12px 0 0; }
