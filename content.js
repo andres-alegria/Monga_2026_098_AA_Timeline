@@ -76,7 +76,7 @@ window.CONTENT = {
     {
       date: "Aug. 21",
       year: "2026",
-      heading: "On video: plans for cattle ranches",
+      heading: "On video: plans for cattle ranchers",
       blocks: [
         {
           type: "text",
