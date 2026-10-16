@@ -1,11 +1,51 @@
-Mongabay WordPress embed — paste this as an [iframe] shortcode in the post.
-Replace YOUR-DEPLOY-URL with the deployed page (Vercel or GitHub Pages).
+Mongabay WordPress embed — paste this into the post as an [iframe] shortcode.
+Deployed at https://monga2026098aatimeline.vercel.app/
 
-The height is a CSS formula of the article column width, the route that works at
-Mongabay (089 / 090). ?fill=1 makes the page stretch to the frame, so any pixels
-the formula over-estimates go into the background around the card, never a gap.
+PASTE THIS
+==========
 
-[iframe src="https://YOUR-DEPLOY-URL/?fill=1" width="100%" scrolling="no" title="How the invasion escalated" style="display:block; width:100%; border:0; height:clamp(730px, calc(1045px - 0.613 * (min(780px, 100vw - 2*clamp(20px, 1px + 5vw, 40px)) - 320px)), 1045px);"][/iframe]
+[iframe src="https://monga2026098aatimeline.vercel.app/?fill=1" width="100%" scrolling="no" loading="lazy" title="How the invasion escalated" style="display:block; width:100%; border:0; --c: min(780px, 100vw - 2*clamp(20px, 1px + 5vw, 40px)); --narrow: calc(1237px - 0.64 * var(--c)); --wide: max(calc(1193px - 0.733 * var(--c)), calc(505px + 0.29 * var(--c))); --gate: max(0px, calc((577px - var(--c)) * 1000)); height: min(var(--narrow), calc(var(--wide) + var(--gate)));"][/iframe]
 
-To open the story on one moment instead of the first, add &step=N (1–7):
-  src="https://YOUR-DEPLOY-URL/?fill=1&step=4"
+
+WHY IT IS SHAPED LIKE THIS
+==========================
+--c      the article column: min(780px, 100vw - the theme's clamp() side padding)
+--narrow the height the stacked phone layout needs, as a line through the measurements
+--wide   the two-column layout from a 560px column up. Its height falls to about a
+         660px column and rises again after, so this is the higher of two lines
+         rather than one, which keeps it within ~20px instead of ~60px
+--gate   0 above a 577px column, huge below it, so `min()` picks --narrow on phones
+         and --wide on everything else. 577 rather than 560 on purpose: on Windows
+         with classic scrollbars 100vw is about 17px wider than the real column, and
+         a step at 560 would hand a narrow-layout page the short wide-layout height
+height   never shorter than the content at any of the 28 widths measured; 7px over at
+         a 780px desktop column, 24px over on average
+
+NO GAP UNDER THE FRAME
+======================
+Two things do this, both already in place:
+- `display:block` stops the iframe sitting on a text baseline, which otherwise leaves
+  a few px of descender space beneath it.
+- `?fill=1` makes the page stretch to the frame and the card stage take up the slack,
+  so any pixels the formula over-estimates become background around the card inside
+  the graphic. The graphic's own background always reaches the bottom edge of the
+  frame, so there is never a strip of page showing through.
+Checked end to end at 375, 414, 626, 700, 860 and 1280px viewports: no vertical or
+horizontal scrollbar, and the background meets the frame edge every time.
+
+IF THE STYLE IS STRIPPED
+========================
+Some setups sanitise `--custom-properties` out of an inline style. The same formula
+written out in full, with no custom properties:
+
+[iframe src="https://monga2026098aatimeline.vercel.app/?fill=1" width="100%" scrolling="no" loading="lazy" title="How the invasion escalated" style="display:block; width:100%; border:0; height:min(calc(1237px - 0.64 * min(780px, 100vw - 2*clamp(20px, 1px + 5vw, 40px))), calc(max(calc(1193px - 0.733 * min(780px, 100vw - 2*clamp(20px, 1px + 5vw, 40px))), calc(505px + 0.29 * min(780px, 100vw - 2*clamp(20px, 1px + 5vw, 40px)))) + max(0px, calc((577px - min(780px, 100vw - 2*clamp(20px, 1px + 5vw, 40px))) * 1000))));"][/iframe]
+
+LINKING TO ONE MOMENT
+=====================
+Add &step=N (1-7) to open on that card, e.g. ...?fill=1&step=4
+
+AFTER ANY COPY CHANGE
+=====================
+Re-measure and refit: dev/heights.json holds the 28 measured column widths, and the
+README says how. The footer source line is the thing that sets the height at the
+narrowest columns, so edit it with care.
