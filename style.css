@@ -80,6 +80,10 @@ body {
   max-width: 780px;         /* adjust the widest the graphic gets here (Mongabay's column) */
   margin: 0 auto;
   padding: 20px 16px 16px;  /* adjust outer spacing here */
+  /* the stage bleeds --peek past this box on each side; clip it rather than let it
+     widen the page, which inside an article iframe meant a horizontal scrollbar.
+     `clip`, not `hidden`: hidden would make this a scroll container. */
+  overflow-x: clip;
 }
 /* In an article iframe the page drops its side padding so the graphic lines up
    with the story text, as in the 089 / 090 embeds. */
@@ -180,7 +184,8 @@ body.is-embedded { min-height: 100%; }
 .stage {
   position: relative;
   overflow: hidden;
-  /* bleed the clipping edge out to the page margin so neighbours fade off-screen */
+  /* bleed the clipping edge out past the column so the neighbours fade off the side
+     without narrowing the card; .tl clips the overhang (see overflow-x below) */
   margin: 0 calc(var(--peek) * -1);
   padding: 0 var(--peek);
   touch-action: pan-y;
@@ -204,6 +209,7 @@ body.is-embedded { min-height: 100%; }
   color: var(--ink-body);
   display: flex;
   flex-direction: column;
+  justify-content: center; /* heading and body centre together in the equal-height card */
   opacity: var(--dim);
   transform: scale(var(--dim-scale));
   transform-origin: 50% 50%;
@@ -228,10 +234,8 @@ body.is-embedded { min-height: 100%; }
 }
 
 .card-body {
-  flex: 1;
   display: flex;            /* the single-column layout: media above words */
   flex-direction: column;
-  justify-content: center;  /* a light card's content sits in the middle, not at the top */
 }
 
 /* Two columns once there is room: media on the left, words on the right. A video
@@ -241,12 +245,34 @@ body.is-embedded { min-height: 100%; }
     display: grid;
     gap: 22px;              /* adjust the gap between media and text here */
     align-items: center;
-    align-content: center;  /* keep the row centred in the taller card */
   }
   .card.media-photo .card-body { grid-template-columns: var(--photo-col) 1fr; }
-  .card.media-video .card-body { grid-template-columns: auto 1fr; }
   .card.has-media .col-media { grid-column: 1; }
   .card.has-media .col-text { grid-column: 2; }
+
+  /* On a video card the clip is only ~170 px wide, so the heading moves beside it
+     rather than sitting across the top — one less line of card height. The card
+     itself becomes the grid and .card-body steps out of the way. */
+  .card.media-video {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    /* the clip spans both rows, so the second row takes all the slack — otherwise it
+       is shared between the rows and opens a gap under the heading */
+    grid-template-rows: auto 1fr;
+    column-gap: 22px;       /* adjust the gap between the clip and the words here */
+  }
+  .card.media-video .card-body { display: contents; }
+  .card.media-video .card-head {
+    grid-column: 2;
+    grid-row: 1;
+    margin-bottom: 10px;
+  }
+  .card.media-video .col-media {
+    grid-column: 1;
+    grid-row: 1 / span 2;   /* the clip runs the full height, beside heading and words */
+    align-self: center;
+  }
+  .card.media-video .col-text { grid-column: 2; grid-row: 2; align-self: start; }
 }
 
 .b-text {
