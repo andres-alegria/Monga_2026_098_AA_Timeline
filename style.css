@@ -112,6 +112,11 @@ body.is-embedded { min-height: 100%; }
 .is-embedded .stage { flex: 1 1 auto; min-height: var(--stage-h, auto); height: auto; }
 
 /* ====================================================== header =========== */
+/* The stage bleeds --peek and centres the card, which leaves every card exactly
+   --gap in from the column edge. The header, rail and footer are not inside the
+   stage, so they need that same inset to line up with the cards. */
+.tl-head { margin-left: var(--gap); margin-right: var(--gap); }
+
 .tl-title {
   margin: 0;
   font-family: var(--font-serif);
@@ -137,7 +142,7 @@ body.is-embedded { min-height: 100%; }
 .rail {
   position: relative;
   display: flex;
-  margin: 22px 0 16px;      /* adjust space around the timeline rail here */
+  margin: 22px var(--gap) 16px;  /* adjust space around the timeline rail here */
   padding-top: 26px;        /* room for the date labels above the rule */
 }
 .rail::before {             /* the rule the ticks sit on */
@@ -610,7 +615,7 @@ body.is-embedded { min-height: 100%; }
 
 /* ====================================================== footer =========== */
 .tl-foot {
-  margin-top: 16px;
+  margin: 16px var(--gap) 0;  /* inset like the cards, so its rule matches their width */
   padding-top: 12px;
   border-top: 1px solid var(--rail-line);
 }
@@ -651,7 +656,7 @@ button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   }
   .card-body > .col-media { margin-top: 12px; }
   .nav { width: 34px; height: 34px; margin-top: -17px; }
-  .rail { margin: 18px 0 14px; }
+  .rail { margin: 18px var(--gap) 14px; }
   .v-overlays li { padding: 3px 0 3px 10px; }
   .v-meta { margin-top: 10px; }
 }

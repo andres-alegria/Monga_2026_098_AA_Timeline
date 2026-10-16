@@ -44,14 +44,6 @@ window.CONTENT = {
         {
           type: "text",
           html: "The Public Defender’s Office said the incursion had evolved from the opening of access routes into an <strong>established occupation</strong>, warning of “concrete and current risk of confrontation” “with a real threat to the lives” of Funai staff and the isolated Indigenous people."
-        },
-        {
-          type: "image",
-          src: "assets/photo-2.jpg",
-          width: 1200,
-          height: 900,
-          alt: "Six agents in tactical vests stand with their backs to the camera, watching a tarpaulin-covered camp burn in a forest clearing.",
-          caption: "Agents in vests marked IBAMA, Funai and Polícia Federal watch a tarpaulin-covered camp burn."
         }
       ]
     },
@@ -102,11 +94,20 @@ window.CONTENT = {
     {
       date: "Aug. 24",
       year: "2026",
-      heading: "A state deputy turns up at the “major event”",
+      heading: "A state deputy turns up at the meeting",
       blocks: [
         {
           type: "text",
-          html: "On Aug. 24, Torres posted an Instagram story saying he was at a “major event” inside Ituna/Itatá, where he met with “thousands” of rural farmers. His appearance appeared to <strong>lend political legitimacy</strong> to the occupation. In the following week, satellites run by Brazil’s space agency started detecting fires inside the reserve."
+          html: "On Aug. 24, Torres posted an Instagram story from inside the territory."
+        },
+        {
+          type: "quote",
+          html: "I’m here at Gleba Bacajaí/Ituna/Itatá for a meeting with many rural producers who are welcoming me.",
+          attribution: "he said."
+        },
+        {
+          type: "text",
+          html: "His appearance appeared to <strong>lend political legitimacy</strong> to the occupation. In the following week, satellites run by Brazil’s space agency started detecting fires inside the reserve."
         },
         {
           type: "video",
@@ -135,6 +136,14 @@ window.CONTENT = {
         {
           type: "text",
           html: "A joint operation by Funai, IBAMA (the federal environmental protection agency) and the Federal Police on Sept. 3 found illegal occupants, motorcycles, and a camp, a spokesperson at the Ministry of Indigenous Affairs confirmed via email. The ministry said the authorities <strong>dismantled the camp</strong>, ordered its occupants to leave, and opened a police investigation into potential crimes. It declined to disclose further operational details, citing the need to protect the ongoing investigation."
+        },
+        {
+          type: "image",
+          src: "assets/photo-2.jpg",
+          width: 1200,
+          height: 900,
+          alt: "Six agents in tactical vests stand with their backs to the camera, watching a tarpaulin-covered camp burn in a forest clearing.",
+          caption: "Agents in vests marked IBAMA, Funai and Polícia Federal watch a tarpaulin-covered camp burn."
         }
       ]
     },
