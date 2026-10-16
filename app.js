@@ -367,22 +367,35 @@
     go(active + (e.key === "ArrowRight" ? 1 : -1));
   });
 
-  /* swipe, but not when the gesture starts on a video or a control */
+  /* Swipe. The only things a drag must not hijack are the ones where a sideways
+     drag means something else: the video's scrub bar, a disclosure and a link.
+     Buttons are deliberately NOT excluded — a tap on play or sound still works,
+     because a click needs press and release on the same element, while a drag
+     never fires one. Excluding the whole .v-frame killed every swipe that began
+     on the clip, which on a phone is most of the card on the two video steps. */
   if (typeof window.Observer !== "undefined") {
     gsap.registerPlugin(Observer);
     Observer.create({
       target: stage,
       type: "touch,pointer",
-      dragMinimum: 24,
-      tolerance: 24,
-      lockAxis: true,
-      axis: "x",
+      dragMinimum: 12,         /* adjust how far a swipe must travel here */
+      tolerance: 12,
+      lockAxis: true,          /* a mostly-vertical drag still scrolls the page */
       onPress: function (self) {
         var t = self.event && self.event.target;
-        self.__skip = !!(t && t.closest && t.closest(".v-frame, .nav, summary, a, button"));
+        self.__skip = !!(t && t.closest && t.closest(".v-bar, summary, a"));
+        self.__done = false;   /* one step per gesture, however many events fire */
       },
-      onLeft: function (self) { if (!self.__skip) go(active + 1); },
-      onRight: function (self) { if (!self.__skip) go(active - 1); }
+      onLeft: function (self) {
+        if (self.__skip || self.__done) return;
+        self.__done = true;
+        go(active + 1);
+      },
+      onRight: function (self) {
+        if (self.__skip || self.__done) return;
+        self.__done = true;
+        go(active - 1);
+      }
     });
   }
 
