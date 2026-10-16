@@ -173,7 +173,7 @@ body.is-embedded { min-height: 100%; }
 .tick:hover .dot { background: var(--page-ink-muted); }
 .tick[aria-current="step"] .dot { background: var(--accent); transform: scale(1.45); }
 .tick[aria-current="step"] .d,
-.tick.is-day-active .d { color: var(--page-ink); }
+.tick.is-day-active .d { color: var(--accent); }  /* the selected date matches its tick */
 .tick.is-done .dot { background: var(--page-ink-muted); }
 
 /* ====================================================== stage ============ */
@@ -189,7 +189,8 @@ body.is-embedded { min-height: 100%; }
 
 .row {
   display: flex;
-  align-items: center;      /* a lighter card floats in the middle of the stage */
+  align-items: stretch;     /* every card is the height of the heaviest one */
+  height: 100%;             /* so spare frame height goes into the cards, not under them */
   gap: var(--gap);
   will-change: transform;
 }
@@ -226,7 +227,12 @@ body.is-embedded { min-height: 100%; }
   text-wrap: balance;
 }
 
-.card-body { flex: 1; display: block; }
+.card-body {
+  flex: 1;
+  display: flex;            /* the single-column layout: media above words */
+  flex-direction: column;
+  justify-content: center;  /* a light card's content sits in the middle, not at the top */
+}
 
 /* Two columns once there is room: media on the left, words on the right. A video
    column is only as wide as the clip itself; a photo column takes a set share. */
@@ -235,6 +241,7 @@ body.is-embedded { min-height: 100%; }
     display: grid;
     gap: 22px;              /* adjust the gap between media and text here */
     align-items: center;
+    align-content: center;  /* keep the row centred in the taller card */
   }
   .card.media-photo .card-body { grid-template-columns: var(--photo-col) 1fr; }
   .card.media-video .card-body { grid-template-columns: auto 1fr; }
